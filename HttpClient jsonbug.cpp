@@ -1,20 +1,22 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h>
+#include <WiFiClientSecure.h>
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 
-WiFiClient client;
+WiFiClientSecure client;
 HTTPClient http;
 
 void opendata(){
-  http.begin(client,"opendata.cwb.gov.tw",80,"/api/v1/rest/datastore/E-A0015-001?Authorization=<Token>&limit=1&offset=1&format=JSON&areaName=%E6%96%B0%E5%8C%97%E5%B8%82");
+  client.setInsecure();
+  http.begin(client,"opendata.cwb.gov.tw",443,"/api/v1/rest/datastore/E-A0015-001?Authorization=<Token>&limit=1&offset=1&format=JSON&areaName=新北市");
   int httpcode = http.GET();
   if (httpcode > 0){
     Serial.print("GET!");
-    // DynamicJsonDocument doc(4096);
+    // DynamicJsonDocument doc(4096);  //用arduino json 印出需要的物件
     // deserializeJson(doc, http.getString());
-    // Serial.println(doc["records"]["location"][0]["locationName"].as<long>()); //地區
+    // Serial.printf(doc["records"]["location"][0]["locationName"]); //地區
+    Serial.print(http.getString());  //將整串json列印出來
   }
   else{
     Serial.println("請求失敗qq");
@@ -40,3 +42,5 @@ void setup() {
 void loop(){
   
 }
+
+// 最後修改時間 2022/4/27 PM 10:56
